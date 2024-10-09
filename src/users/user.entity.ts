@@ -1,9 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {  Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-
-@Entity({name: 'users'})
-export class User{
-
+@Entity( { name: 'users' } )
+export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -30,8 +28,7 @@ export class User{
 
     @Column({type: 'datetime', default: () => 'CURRENT_TIMESTAMP'})
     created_at: Date;
-    
-    @Column({type: 'datetime', default: () => 'CURRENT_TIMESTAMP'})
-    updated_at: Date;
 
+    @Column({type: 'datetime', default: () => 'CURRENT_TIMESTAMP'})
+    update_at: Date;
 }
