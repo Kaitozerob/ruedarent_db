@@ -5,13 +5,15 @@ import { Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/register-auth.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import {compare} from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
 export class AuthService {
 
     constructor(
-        @InjectRepository(User) private userRepository: Repository<User>
+        @InjectRepository(User) private userRepository: Repository<User>,
+        private jwtService: JwtService
     ) {}
 
     async register(user: RegisterUserDto){
@@ -59,6 +61,13 @@ export class AuthService {
             return  new HttpException('Invalid password', HttpStatus.FORBIDDEN);
         }
 
-        return userFound;
+        const payload = {id: userFound.id, name: userFound.name};
+        const token = this.jwtService.sign(payload);
+        const data = {
+            user: userFound,
+            token: token
+        };
+
+        return data;
     }
 }
