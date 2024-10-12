@@ -14,8 +14,6 @@ export class UsersService {
         @InjectRepository(User) private usersRepository: Repository<User>
     ) {}
 
-   
-
     create(user: CreateUserDto){
         const newUser = this.usersRepository.create(user);
         return this.usersRepository.save(newUser);
