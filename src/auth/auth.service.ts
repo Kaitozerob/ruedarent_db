@@ -20,16 +20,15 @@ export class AuthService {
 
         const {email, phone} = user;
 
-        const emailExists = await this.userRepository.findOneBy({email: user.email});
+        const emailExists = await this.userRepository.findOneBy({email: email});
 
         if(emailExists){
             // throw new Error('Email already exists');
             // error 409 conflict
             return  new HttpException('Email already exists', HttpStatus.CONFLICT);
-
         }
         
-        const phoneExists = await this.userRepository.findOneBy({phone: user.phone});
+        const phoneExists = await this.userRepository.findOneBy({phone: phone});
 
         if(phoneExists){
             // throw new Error('Phone already exists');
@@ -39,7 +38,17 @@ export class AuthService {
 
 
         const newUser = this.userRepository.create(user);
-        return this.userRepository.save(newUser);
+        const userSaved = await this.userRepository.save(newUser);
+
+        const payload = {id: userSaved.id, name: userSaved.name};
+        const token = this.jwtService.sign(payload);
+        const data = {
+            user: userSaved,
+            token: 'Bearer ' + token
+        }
+
+        return data;
+
     }
 
     //Login method
@@ -65,8 +74,10 @@ export class AuthService {
         const token = this.jwtService.sign(payload);
         const data = {
             user: userFound,
-            token: token
-        };
+            token: 'Bearer' + ' ' + token
+        }
+
+        delete data.user.password;
 
         return data;
     }
